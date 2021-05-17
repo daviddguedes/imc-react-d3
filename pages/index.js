@@ -1,12 +1,14 @@
 import Head from 'next/head'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3';
 import data from './../data1.json';
 import useWindowSize from '../hooks/windowSize';
+import TooltipComponent from '../components/Tooltip';
 // import styles from '../styles/Home.module.css'
 
 export default function Home() {
   const { clientWidth, clientHeight } = useWindowSize();
+  const [tooltipVars, setTooltipVars] = useState(null);
 
   useEffect(() => {
     if (clientWidth && clientHeight) {
@@ -56,33 +58,18 @@ export default function Home() {
         .interpolator(d3.interpolatePlasma)
         .domain([1, 100])
 
-      const Tooltip = d3.select("#div_template")
-        .append("div")
-        .style("opacity", 0)
-        .style("position", "absolute")
-        .attr("class", "tooltip")
-        .style("background-color", "white")
-        .style("border", "solid")
-        .style("border-width", "2px")
-        .style("border-radius", "5px")
-        .style("padding", "5px")
-
       const mouseover = function (d) {
-        Tooltip
-          .style("opacity", 1)
+        setTooltipVars(state => ({ ...state, opacity: 1 }));
         d3.select(this)
           .style("stroke", "black")
           .style("opacity", 1)
       }
       const mousemove = function (event, d) {
-        Tooltip
-          .html(`<h3>Altura: ${d.variable}</h3><h3>Peso: ${d.group}</h3><h3>Seu IMC é ${d.value}</h3>`)
-          .style("left", `${event.clientX + 28}px`)
-          .style("top", `${event.clientY}px`)
+        const { clientX, clientY } = event;
+        setTooltipVars(state => ({ ...d, clientX, clientY, opacity: 1 }));
       }
       const mouseleave = function (d) {
-        Tooltip
-          .style("opacity", 0)
+        setTooltipVars(state => ({ ...state, opacity: 0 }));
         d3.select(this)
           .style("stroke", "none")
           .style("opacity", 0.8)
@@ -116,7 +103,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div id="div_template"></div>
+      <div id="div_template">
+        {tooltipVars && <TooltipComponent d={tooltipVars} />}
+      </div>
 
     </div>
   )
