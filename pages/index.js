@@ -104,7 +104,12 @@ export default function Home() {
       </Head>
 
       <div id="div_template">
-        {tooltipVars && <TooltipComponent d={tooltipVars} />}
+        {tooltipVars
+          && <TooltipComponent
+            d={tooltipVars}
+            width={clientWidth}
+            height={clientHeight}
+          />}
       </div>
 
     </div>
