@@ -25,8 +25,8 @@ export default function Home() {
         .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
-      const xData = d3.map(data, function (d) { return d.group; });
-      const yData = d3.map(data, function (d) { return d.variable; });
+      const xData = data.map(function (d) { return d.group; });
+      const yData = data.map(function (d) { return d.variable; });
 
       const x = d3.scaleBand()
         .range([0, width])
